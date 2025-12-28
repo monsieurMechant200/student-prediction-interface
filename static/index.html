@@ -1,0 +1,662 @@
+<!-- index.html - Fichier frontend inspiré de prediction v2.txt -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DATAIKÔS - Prédiction de Réussite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-bg: #0A0E27;
+      --secondary-bg: #1A1F3A;
+      --accent-color: #00D4FF;
+      --gold: #FFD700;
+      --success: #00FF88;
+      --warning: #FF6B35;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8B8;
+      --gradient-accent: linear-gradient(135deg, #00D4FF 0%, #0099CC 100%);
+      --gradient-success: linear-gradient(135deg, #00FF88 0%, #00CC6A 100%);
+      --gradient-error: linear-gradient(135deg, #FF6B35 0%, #CC3311 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+    }
+
+    .prediction-card {
+      background: var(--secondary-bg);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-group input::placeholder {
+      color: rgba(184, 184, 184, 0.5);
+    }
+
+    .predict-btn {
+      width: 100%;
+      padding: 1.2rem;
+      background: var(--gradient-accent);
+      border: none;
+      border-radius: 15px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .predict-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    }
+
+    .predict-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .result-container {
+      margin-top: 2rem;
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      animation: scaleIn 0.5s ease;
+      display: none;
+    }
+
+    .result-container.success {
+      background: rgba(0, 255, 136, 0.1);
+      border: 2px solid var(--success);
+      display: block;
+    }
+
+    .result-container.failure {
+      background: rgba(255, 107, 53, 0.1);
+      border: 2px solid var(--warning);
+      display: block;
+    }
+
+    .result-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-container.success .result-icon {
+      color: var(--success);
+    }
+
+    .result-container.failure .result-icon {
+      color: var(--warning);
+    }
+
+    .result-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-container.success .result-title {
+      color: var(--success);
+    }
+
+    .result-container.failure .result-title {
+      color: var(--warning);
+    }
+
+    .result-description {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .result-probability {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .probability-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .probability-fill {
+      height: 100%;
+      transition: width 1s ease;
+      border-radius: 10px;
+    }
+
+    .result-container.success .probability-fill {
+      background: var(--gradient-success);
+    }
+
+    .result-container.failure .probability-fill {
+      background: var(--gradient-error);
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid var(--accent-color);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .info-tooltip {
+      display: inline-block;
+      margin-left: 0.3rem;
+      color: var(--accent-color);
+      cursor: help;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .prediction-card {
+        padding: 1.5rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="logo">DATAIKÔS</h1>
+      <p class="subtitle">🎓 Prédiction de Réussite Étudiante par IA</p>
+    </div>
+
+    <div class="prediction-card">
+      <form id="predictionForm">
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="fas fa-user"></i>
+            Informations Personnelles
+          </h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>
+                Âge
+                <i class="fas fa-info-circle info-tooltip" title="Votre âge en années"></i>
+              </label>
+              <input type="number" name="Age" required min="15" max="100" placeholder="Ex: 20">
+            </div>
+
+            <div class="form-group">
+              <label>
+                Genre
+                <i class="fas fa-info-circle info-tooltip" title="0 = Femme, 1 = Homme"></i>
+              </label>
+              <select name="Gender" required>
+                <option value="">Sélectionner...</option>
+                <option value="0">Femme</option>
+                <option value="1">Homme</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Niveau d'études
+                <i class="fas fa-info-circle info-tooltip" title="1 = Licence, 2 = Master, 3 = Doctorat"></i>
+              </label>
+              <select name="Level" required>
+                <option value="">Sélectionner...</option>
+                <option value="1">Licence (L1-L3)</option>
+                <option value="2">Master (M1-M2)</option>
+                <option value="3">Doctorat (PhD)</option>
+                <option value="4">Autre</option>
+                <option value="5">Autre</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Situation de vie
+                <i class="fas fa-info-circle info-tooltip" title="0 = Chez parents, 1 = Seul, 2 = Colocation"></i>
+              </label>
+              <select name="Living_Situation" required>
+                <option value="">Sélectionner...</option>
+                <option value="0">Chez les parents</option>
+                <option value="1">Seul(e)</option>
+                <option value="2">En colocation</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="fas fa-graduation-cap"></i>
+            Performances Académiques
+          </h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>
+                GPA (Moyenne)
+                <i class="fas fa-info-circle info-tooltip" title="Votre moyenne générale (sur 20)"></i>
+              </label>
+              <input type="number" name="GPA" required min="0" max="20" step="0.01" placeholder="Ex: 14.5">
+            </div>
+
+            <div class="form-group">
+              <label>
+                Qualité d'enseignement
+                <i class="fas fa-info-circle info-tooltip" title="Note sur la qualité des cours (0-3)"></i>
+              </label>
+              <select name="Teaching_Quality" required>
+                <option value="">Sélectionner...</option>
+                <option value="0">Mauvaise</option>
+                <option value="1">Moyenne</option>
+                <option value="2">Bonne</option>
+                <option value="3">Excellente</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Sessions de labo
+                <i class="fas fa-info-circle info-tooltip" title="Participation aux labs (0 = Non, 1 = Oui)"></i>
+              </label>
+              <select name="Lab_Sessions" required>
+                <option value="">Sélectionner...</option>
+                <option value="0">Non</option>
+                <option value="1">Oui</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Plan structuré
+                <i class="fas fa-info-circle info-tooltip" title="Niveau de planification (0-2)"></i>
+              </label>
+              <select name="Structured_Plan" required>
+                <option value="">Sélectionner...</option>
+                <option value="0">Aucun</option>
+                <option value="1">Basique</option>
+                <option value="2">Détaillé</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="fas fa-heartbeat"></i>
+            Habitudes de Vie
+          </h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>
+                Heures de sommeil/jour
+                <i class="fas fa-info-circle info-tooltip" title="Heures moyennes de sommeil par jour"></i>
+              </label>
+              <input type="number" name="Sleep_Hours_Daily" required min="0" max="24" step="0.5" placeholder="Ex: 7.5">
+            </div>
+
+            <div class="form-group">
+              <label>
+                Activité physique
+                <i class="fas fa-info-circle info-tooltip" title="Niveau d'activité (0 = Aucune, 1 = Modérée, 2 = Intense)"></i>
+              </label>
+              <select name="Physical_Activity" required>
+                <option value="">Sélectionner...</option>
+                <option value="0">Aucune</option>
+                <option value="1">Modérée</option>
+                <option value="2">Intense</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Heures d'étude/semaine
+                <i class="fas fa-info-circle info-tooltip" title="Heures d'étude par semaine"></i>
+              </label>
+              <input type="number" name="Study_Hours_Weekly" required min="0" max="168" placeholder="Ex: 20">
+            </div>
+
+            <div class="form-group">
+              <label>
+                Régularité en classe
+                <i class="fas fa-info-circle info-tooltip" title="Note de régularité (0-6)"></i>
+              </label>
+              <input type="number" name="Class_Regularity" required min="0" max="6" step="0.1" placeholder="Ex: 4.5">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="fas fa-lightbulb"></i>
+            Facteurs de Succès
+          </h2>
+          <div class="form-group">
+            <label>
+              Facteurs de succès
+              <i class="fas fa-info-circle info-tooltip" title="Décrivez les facteurs qui contribuent à votre succès"></i>
+              <span id="successFactorsCount" style="font-size: 0.8rem; color: var(--text-secondary);">(0 caractères)</span>
+            </label>
+            <textarea id="successFactorsText" name="Success_Factors" rows="4" placeholder="Ex: Bonne organisation, soutien familial..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="fas fa-tools"></i>
+            Suggestions d'Amélioration
+          </h2>
+          <div class="form-group">
+            <label>
+              Suggestions d'amélioration
+              <i class="fas fa-info-circle info-tooltip" title="Idées pour améliorer vos performances"></i>
+              <span id="improvementSuggestionsCount" style="font-size: 0.8rem; color: var(--text-secondary);">(0 caractères)</span>
+            </label>
+            <textarea id="improvementSuggestionsText" name="Improvement_Suggestions" rows="4" placeholder="Ex: Plus de pratique, meilleur sommeil..."></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="predict-btn" id="predictBtn">
+          <i class="fas fa-magic"></i>
+          <span>Prédire la Réussite</span>
+        </button>
+      </form>
+
+      <div class="result-container" id="resultContainer">
+        <div class="result-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3 class="result-title">RÉUSSI</h3>
+        <p class="result-description">L'étudiant a de fortes chances de réussir !</p>
+        <div class="result-probability">
+          <p>Probabilité de réussite: <strong id="probabilityText">0%</strong></p>
+          <div class="probability-bar">
+            <div class="probability-fill" id="probabilityFill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Compteur de caractères pour Success Factors
+    const successFactorsText = document.getElementById('successFactorsText');
+    const successFactorsCount = document.getElementById('successFactorsCount');
+    
+    successFactorsText.addEventListener('input', function() {
+      const length = this.value.length;
+      successFactorsCount.textContent = `(${length} caractères)`;
+      if (length < 50) {
+        successFactorsCount.style.color = 'var(--warning)';
+      } else if (length < 150) {
+        successFactorsCount.style.color = 'var(--gold)';
+      } else {
+        successFactorsCount.style.color = 'var(--success)';
+      }
+    });
+
+    // Compteur de caractères pour Improvement Suggestions
+    const improvementSuggestionsText = document.getElementById('improvementSuggestionsText');
+    const improvementSuggestionsCount = document.getElementById('improvementSuggestionsCount');
+    
+    improvementSuggestionsText.addEventListener('input', function() {
+      const length = this.value.length;
+      improvementSuggestionsCount.textContent = `(${length} caractères)`;
+      if (length < 50) {
+        improvementSuggestionsCount.style.color = 'var(--warning)';
+      } else if (length < 150) {
+        improvementSuggestionsCount.style.color = 'var(--gold)';
+      } else {
+        improvementSuggestionsCount.style.color = 'var(--success)';
+      }
+    });
+
+    // Gestion du formulaire avec appel API
+    document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('predictBtn');
+      const resultContainer = document.getElementById('resultContainer');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div><span>Analyse en cours...</span>';
+      resultContainer.style.display = 'none';
+
+      // Récupérer les valeurs
+      const formData = new FormData(e.target);
+      
+      const data = {
+        Age: parseFloat(formData.get('Age')),
+        Gender: parseInt(formData.get('Gender')),
+        Level: parseInt(formData.get('Level')),
+        GPA: parseFloat(formData.get('GPA')),
+        Teaching_Quality: parseFloat(formData.get('Teaching_Quality')),
+        Lab_Sessions: parseInt(formData.get('Lab_Sessions')),
+        Structured_Plan: parseInt(formData.get('Structured_Plan')),
+        Living_Situation: parseInt(formData.get('Living_Situation')),
+        Sleep_Hours_Daily: parseFloat(formData.get('Sleep_Hours_Daily')),
+        Physical_Activity: parseInt(formData.get('Physical_Activity')),
+        Success_Factors_Len: formData.get('Success_Factors').length,
+        Improvement_Suggestions_Len: formData.get('Improvement_Suggestions').length,
+        Study_Hours_Weekly: parseInt(formData.get('Study_Hours_Weekly')),
+        Class_Regularity: parseFloat(formData.get('Class_Regularity'))
+      };
+
+      try {
+        // Appel à l'API
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error('Erreur API');
+        }
+
+        const result = await response.json();
+
+        // Afficher le résultat
+        displayResult(result);
+      } catch (error) {
+        console.error('Erreur:', error);
+        // Gérer l'erreur (optionnel)
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-magic"></i><span>Prédire la Réussite</span>';
+      }
+    });
+
+    function displayResult(result) {
+      const container = document.getElementById('resultContainer');
+      const icon = container.querySelector('.result-icon i');
+      const title = container.querySelector('.result-title');
+      const description = container.querySelector('.result-description');
+      const probabilityText = document.getElementById('probabilityText');
+      const probabilityFill = document.getElementById('probabilityFill');
+
+      container.classList.remove('success', 'failure');
+
+      if (result.prediction === 1) {
+        container.classList.add('success');
+        icon.className = 'fas fa-trophy';
+        title.textContent = 'RÉUSSI ✓';
+        description.textContent = "L'étudiant a de fortes chances de réussir !";
+      } else {
+        container.classList.add('failure');
+        icon.className = 'fas fa-exclamation-triangle';
+        title.textContent = 'ÉCHOUÉ ✗';
+        description.textContent = "L'étudiant risque de rencontrer des difficultés.";
+      }
+
+      const percentage = (result.probability * 100).toFixed(1);
+      probabilityText.textContent = percentage + '%';
+      
+      setTimeout(() => {
+        probabilityFill.style.width = percentage + '%';
+      }, 100);
+
+      container.style.display = 'block';
+      container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+</body>
+</html>

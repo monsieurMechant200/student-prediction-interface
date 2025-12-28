@@ -1,0 +1,15 @@
+# requirements.txt
+# Dépendances minimales pour le backend FastAPI + prédiction manuelle
+
+fastapi==0.115.0
+uvicorn==0.30.6
+numpy>=1.2.0  # Accepte n'importe quelle version 2.x récente (recommandé)
+pydantic==2.9.2
+
+# Optionnel : pour un serveur de production plus robuste (remplace uvicorn)
+# gunicorn==23.0.0
+
+# Note : 
+# - Aucune dépendance scikit-learn, joblib, tensorflow, torch, etc.
+# - Tout le modèle (theta + min/max) est hardcodé dans app.py
+# - Le frontend est purement HTML/CSS/JS, aucune dépendance supplémentaire
