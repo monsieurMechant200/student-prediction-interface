@@ -1,4 +1,4 @@
-# DATAIKÔS - Prédiction de Réussite Étudiante par IA
+#  Prédiction de Réussite Étudiante par IA
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.0-green)](https://fastapi.tiangolo.com/)
