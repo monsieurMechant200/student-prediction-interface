@@ -658,5 +658,68 @@
       container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   </script>
+  <!-- Chatbot DATAIKÔS Assistant (gratuit via Hugging Face) -->
+<div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: #1A1F3A; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden; font-family: 'Inter', sans-serif; z-index: 1000;">
+  <div style="background: var(--gradient-accent); padding: 12px; color: white; font-weight: bold; text-align: center;">
+    🤖 DATAIKÔS Assistant
+    <span style="float: right; cursor: pointer; font-size: 1.2rem;" onclick="document.getElementById('chatbot-container').style.display='none'">×</span>
+  </div>
+  <div id="chat-messages" style="height: 400px; overflow-y: auto; padding: 15px; color: white;"></div>
+  <div style="display: flex; padding: 10px; background: #0A0E27;">
+    <input id="chat-input" type="text" placeholder="Demande des conseils sur ta prédiction..." style="flex: 1; padding: 10px; border: none; border-radius: 10px 0 0 10px; background: rgba(255,255,255,0.1); color: white;">
+    <button onclick="sendMessage()" style="padding: 10px 15px; background: #00D4FF; border: none; border-radius: 0 10px 10px 0; color: #0A0E27; cursor: pointer;">➤</button>
+  </div>
+</div>
+
+<script>
+// Insertion tu token
+const HF_TOKEN = "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";
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const messagesDiv = document.getElementById('chat-messages');
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
+
+  // Message utilisateur
+  messagesDiv.innerHTML += `<div style="text-align: right; margin: 10px 0;"><strong>Vous:</strong> ${userMessage}</div>`;
+  input.value = '';
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  // Appel à l'API Hugging Face (modèle gratuit et rapide)
+  try {
+    const response = await fetch("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${HF_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        inputs: userMessage,
+        parameters: { max_length: 200 }
+      })
+    });
+
+    const data = await response.json();
+    let botReply = "Désolé, je réfléchis encore... 😅";
+    if (data.generated_text) {
+      botReply = data.generated_text;
+    } else if (data.error) {
+      botReply = "Je suis temporairement indisponible. Réessaie dans quelques secondes !";
+    }
+
+    // Message du bot
+    messagesDiv.innerHTML += `<div style="text-align: left; margin: 10px 0; background: rgba(0,212,255,0.2); padding: 10px; border-radius: 10px;"><strong>Assistant:</strong> ${botReply}</div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  } catch (err) {
+    messagesDiv.innerHTML += `<div style="color: #FF6B35;">Erreur de connexion. Vérifie ta connexion internet.</div>`;
+  }
+}
+
+// Envoi avec Entrée
+document.getElementById('chat-input').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+</script>
 </body>
 </html>
