@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.0-green)](https://fastapi.tiangolo.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 **DATAIKÔS** est une application web légère qui utilise un modèle de **régression logistique** entraîné pour prédire les chances de réussite d’un étudiant en fonction de ses habitudes, performances académiques et facteurs personnels.
 
@@ -13,11 +13,11 @@ Ce projet inclut :
 - Un **frontend statique** beau et responsive (HTML/CSS/JS pur)
 - Tout le modèle **hardcodé** (pas de dépendances ML lourdes comme scikit-learn)
 
-## 🚀 Démo locale
+##  Démo locale
 
 Une fois le serveur lancé, ouvrez votre navigateur et allez à :
 
-👉 **http://127.0.0.1:8000/static/index.html**
+👉 **[http://127.0.0.1:8000/static/index.html](https://student-prediction-interface.onrender.com/static/index.html)**
 
 Vous pourrez remplir le formulaire et obtenir instantanément la prédiction de réussite avec la probabilité associée.
 
@@ -37,6 +37,7 @@ Vous pourrez remplir le formulaire et obtenir instantanément la prédiction de 
   - F1-Score : ~82%
 
 ## 🛠️ Installation et lancement
+#### A defaut de tout simplement cliquer sur le lien pour utilisation, faites ceci:
 
 ### Prérequis
 - Python 3.8 ou supérieur
@@ -99,6 +100,7 @@ dataikos/
 ├── requirements.txt        # Dépendances minimales
 ├── static/
 │   └── index.html          # Frontend complet (formulaire + affichage résultat)
+│   └── favicon.ico          # icone necessqire qu bon fonctionnement 
 └── README.md               # Ce fichier
 ```
 
@@ -117,4 +119,4 @@ Ce projet est sous licence **Personnelle**.
 
 **DATAIKÔS** – Parce que chaque étudiant mérite de connaître ses chances de réussite 🚀
 
-Made with ❤️ par [l'equipe David, Faysal, Prudencia, Randy et Armstrong]
+Made with ❤️ par l'equipe David, Faysal, Prudencia, Randy et Armstrong
