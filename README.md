@@ -17,11 +17,11 @@ Ce projet inclut :
 
 Une fois le serveur lancé, ouvrez votre navigateur et allez à :
 
-👉 **[http://127.0.0.1:8000/static/index.html](https://student-prediction-interface.onrender.com/static/index.html)**
+ **[Tester le modèle de prediction ici](https://student-prediction-interface.onrender.com/static/index.html)**
 
 Vous pourrez remplir le formulaire et obtenir instantanément la prédiction de réussite avec la probabilité associée.
 
-## 📊 Aperçu du modèle
+##  Aperçu du modèle
 
 - **Algorithme** : Régression logistique (implémentation from scratch + optimisation par descente de gradient)
 - **Fonction de perte** : Binary Cross Entropy (meilleure performance)
@@ -36,7 +36,7 @@ Vous pourrez remplir le formulaire et obtenir instantanément la prédiction de 
   - Accuracy : ~89%
   - F1-Score : ~82%
 
-## 🛠️ Installation et lancement
+##  Installation et lancement
 #### A defaut de tout simplement cliquer sur le lien pour utilisation, faites ceci:
 
 ### Prérequis
@@ -81,7 +81,7 @@ uvicorn app:app --reload
 
 Allez à l’URL suivante dans votre navigateur :
 
-🔗 **http://127.0.0.1:8000/static/index.html**
+ **http://127.0.0.1:8000/static/index.html**
 
 ## Structure du projet
 
@@ -104,14 +104,14 @@ dataikos/
 └── README.md               # Ce fichier
 ```
 
-## 🔧 Personnalisation
+##  Personnalisation
 
 - Pour ajuster le seuil de décision (par défaut 0.5) : modifiez la ligne dans `app.py`
   ```python
   prediction = int(prob >= 0.5)  # ← changez 0.5 si besoin
   ```
 
-## 📄 Licence
+##  Licence
 
 Ce projet est sous licence **Personnelle**.
 
@@ -119,4 +119,4 @@ Ce projet est sous licence **Personnelle**.
 
 **DATAIKÔS** – Parce que chaque étudiant mérite de connaître ses chances de réussite 🚀
 
-Made with ❤️ par l'equipe David, Faysal, Prudencia, Randy et Armstrong
+Fais avec coeur par l'equipe David, Faysal, Prudencia, Randy et Armstrong
