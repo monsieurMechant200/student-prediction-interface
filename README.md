@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.0-green)](https://fastapi.tiangolo.com/)
 
 
-**DATAIKÔS** est une application web légère qui utilise un modèle de **régression logistique** entraîné pour prédire les chances de réussite d’un étudiant en fonction de ses habitudes, performances académiques et facteurs personnels.
+**DATAIKÔS** est une application web légère qui utilise un modèle de **régression logistique** entraîné pour prédire si un étudiant réussira son année scolaire en fonction de ses habitudes, performance académique antérieure et facteurs personnels.
 
 Le modèle a été comparé avec plusieurs fonctions de perte (Binary Cross Entropy, Focal Loss, Hinge Loss) et la version **Binary Cross Entropy** a donné les meilleures performances (Accuracy ≈ 89% sur le jeu de test).
 
@@ -117,6 +117,6 @@ Ce projet est sous licence **Personnelle**.
 
 ---
 
-**DATAIKÔS** – Parce que chaque étudiant mérite de connaître ses chances de réussite 🚀
+**DATAIKÔS** – Parce que chaque étudiant mérite de connaître ses chances de réussite 
 
 Fais avec coeur par l'equipe David, Faysal, Prudencia, Randy et Armstrong
