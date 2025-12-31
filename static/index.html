@@ -321,7 +321,7 @@
   <div class="container">
     <div class="header">
       <h1 class="logo">DATAIKÔS</h1>
-      <p class="subtitle">🎓 Prédiction de Réussite Étudiante par IA</p>
+      <p class="subtitle"> Prédiction de Réussite Étudiante par IA</p>
     </div>
 
     <div class="prediction-card">
@@ -355,7 +355,7 @@
             <div class="form-group">
               <label>
                 Niveau d'études
-                <i class="fas fa-info-circle info-tooltip" title="1 = Licence, 2 = Master, 3 = Doctorat"></i>
+                <i class="fas fa-info-circle info-tooltip" title="1 = Niveau1, 2 = Niveau2, 3 = Niveau3, 4 = Niveau4", 5 = Niveau5></i>
               </label>
               <select name="Level" required>
                 <option value="">Sélectionner...</option>
@@ -390,7 +390,7 @@
           <div class="form-grid">
             <div class="form-group">
               <label>
-                GPA (Moyenne)
+                GPA (Moyenne de l'année académique passée)
                 <i class="fas fa-info-circle info-tooltip" title="Votre moyenne générale (sur 20)"></i>
               </label>
               <input type="number" name="GPA" required min="0" max="20" step="0.01" placeholder="Ex: 14.5">
@@ -533,10 +533,10 @@
       </div>
     </div>
   </div>
-    <!-- Chatbot DATAIKÔS Assistant (gratuit via Hugging Face) -->
+    <!-- Chatbot DATAIKÔS Assistant (gratuit via Hugging Face) 
 <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: #1A1F3A; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden; font-family: 'Inter', sans-serif; z-index: 1000;">
   <div style="background: var(--gradient-accent); padding: 12px; color: white; font-weight: bold; text-align: center;">
-    🤖 DATAIKÔS Assistant
+    DATAIKÔS Assistant
     <span style="float: right; cursor: pointer; font-size: 1.2rem;" onclick="document.getElementById('chatbot-container').style.display='none'">×</span>
   </div>
   <div id="chat-messages" style="height: 400px; overflow-y: auto; padding: 15px; color: white;"></div>
@@ -545,7 +545,7 @@
     <button onclick="sendMessage()" style="padding: 10px 15px; background: #00D4FF; border: none; border-radius: 0 10px 10px 0; color: #0A0E27; cursor: pointer;">➤</button>
   </div>
 </div>
-
+-->
   <script>
     // Compteur de caractères pour Success Factors
     const successFactorsText = document.getElementById('successFactorsText');
@@ -670,6 +670,7 @@
       container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   </script>
+  <!--
   <script>
   // Insertion tu token
     const HF_TOKEN = "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";
@@ -723,6 +724,7 @@
     document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
     });
+    -->
   </script>
 </body>
 </html>
