@@ -1,21 +1,19 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[4]:
-
-
-# app.py
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 import numpy as np
+import logging
 
-app = FastAPI(title="DATAIKÔS - Prédiction Réussite Étudiante")
+# Configuration du logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+app = FastAPI(title="DATAIKÔS - Prédiction de Réussite Étudiante")
+
+# CORS (restreindre en prod à votre domaine frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Changez à ["http://votre-frontend.com"] en production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,6 +43,20 @@ class StudentData(BaseModel):
     Study_Hours_Weekly: int
     Class_Regularity: float
 
+    @field_validator('Age')
+    def validate_age(cls, v):
+        if not 16 <= v <= 30:
+            raise ValueError('Âge doit être entre 16 et 30')
+        return v
+
+    @field_validator('GPA')
+    def validate_gpa(cls, v):
+        if not 0 <= v <= 20:
+            raise ValueError('GPA doit être entre 0 et 20')
+        return v
+
+    # Ajoutez d'autres validateurs si nécessaire...
+
 def sigmoid(z):
     return 1 / (1 + np.exp(-np.clip(z, -250, 250)))
 
@@ -54,29 +66,54 @@ def root():
 
 @app.post("/predict")
 def predict(data: StudentData):
-    features = np.array([[
-        data.Age, data.Gender, data.Level, data.GPA, data.Teaching_Quality,
-        data.Lab_Sessions, data.Structured_Plan, data.Living_Situation,
-        data.Sleep_Hours_Daily, data.Physical_Activity,
-        data.Success_Factors_Len, data.Improvement_Suggestions_Len,
-        data.Study_Hours_Weekly, data.Class_Regularity
-    ]])
+    try:
+        features = np.array([[
+            data.Age, data.Gender, data.Level, data.GPA, data.Teaching_Quality,
+            data.Lab_Sessions, data.Structured_Plan, data.Living_Situation,
+            data.Sleep_Hours_Daily, data.Physical_Activity, data.Success_Factors_Len,
+            data.Improvement_Suggestions_Len, data.Study_Hours_Weekly, data.Class_Regularity
+        ]])
 
-    scaled = (features - MIN_VALS) / (MAX_VALS - MIN_VALS + 1e-8)
-    X_b = np.c_[np.ones(scaled.shape[0]), scaled]
-    prob = sigmoid(np.dot(X_b, THETA))[0]
+        # Normalisation
+        scaled = (features - MIN_VALS) / (MAX_VALS - MIN_VALS + 1e-8)
+        X_b = np.c_[np.ones(scaled.shape[0]), scaled]
 
-    return {
-        "prediction": int(prob >= 0.5),
-        "probability": round(float(prob), 4)
-    }
+        # Prédiction
+        prob = sigmoid(np.dot(X_b, THETA))[0]
+        prediction = int(prob >= 0.5)
 
-# Servir le frontend
-app.mount("/static", StaticFiles(directory="static", html=True), name="static")
+        logger.info(f"Prédiction effectuée : {prediction} avec probabilité {prob}")
 
+        # Recommandations personnalisées (priorisées et limitées à 5)
+        recommendations = []
+        if data.GPA < 12:
+            recommendations.append("Votre GPA est bas : augmentez vos heures d'étude à 25-30h/semaine et revoyez vos méthodes.")
+        if data.Sleep_Hours_Daily < 7:
+            recommendations.append("Sommeil insuffisant : visez 7-9h par nuit pour booster votre concentration et performance.")
+        if data.Study_Hours_Weekly < 20:
+            recommendations.append("Étudiez plus : planifiez des sessions structurées en groupe pour atteindre 20h minimum.")
+        if data.Physical_Activity < 1:
+            recommendations.append("Activité physique faible : intégrez 30min d'exercice 3x/semaine pour réduire le stress.")
+        if data.Class_Regularity < 4:
+            recommendations.append("Régularité en classe à améliorer : assistez à au moins 90% des cours pour mieux suivre.")
+        if data.Success_Factors_Len < 50:
+            recommendations.append("Développez vos facteurs de succès : listez plus de stratégies personnelles pour renforcer votre motivation.")
+        if data.Improvement_Suggestions_Len < 50:
+            recommendations.append("Pensez à plus d'améliorations : identifiez des axes comme le sommeil ou l'organisation.")
+        if not recommendations:
+            recommendations.append("Profil excellent ! Maintenez vos habitudes pour assurer une réussite continue.")
 
-# In[ ]:
+        # Limiter à 5 max et prioriser (ex. : trier par criticité si besoin)
+        recommendations = recommendations[:5]
 
-
-
-
+        return {
+            "prediction": prediction,
+            "probability": round(float(prob), 4),
+            "recommendations": recommendations
+        }
+    except ValueError as ve:
+        logger.warning(f"Validation échouée : {str(ve)}")
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        logger.error(f"Erreur interne : {str(e)}")
+        raise HTTPException(status_code=500, detail="Erreur lors de la prédiction")
