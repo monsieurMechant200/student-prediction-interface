@@ -1,5 +1,7 @@
+```python
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator
 import numpy as np
 import logging
@@ -20,8 +22,8 @@ app.add_middleware(
 )
 
 # Modèle hardcodé (theta + min/max)
-THETA = np.array([-6.60598966, -0.38887618, -0.05527884,  0.24046097, 14.34727348, -0.66947624,  0.0156859,
-                  -0.17815602,  0.32959119, -0.01474053, 0.08425352, -0.45180327,  0.02356171, -0.2706575 , -0.9303213
+THETA = np.array([-6.60598966, -0.38887618, -0.05527884, 0.24046097, 14.34727348, -0.66947624, 0.0156859,
+                  -0.17815602, 0.32959119, -0.01474053, 0.08425352, -0.45180327, 0.02356171, -0.2706575 , -0.9303213
 ])
 
 MIN_VALS = np.array([16., 0., 1., 7., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
@@ -56,6 +58,59 @@ class StudentData(BaseModel):
         return v
 
     # Ajoutez d'autres validateurs si nécessaire...
+    @field_validator('Level')
+    def validate_level(cls, v):
+        if not 1 <= v <= 5:
+            raise ValueError('Niveau doit être entre 1 et 5')
+        return v
+
+    @field_validator('Teaching_Quality')
+    def validate_teaching_quality(cls, v):
+        if not 0 <= v <= 3:
+            raise ValueError('Qualité d\'enseignement doit être entre 0 et 3')
+        return v
+
+    @field_validator('Lab_Sessions')
+    def validate_lab_sessions(cls, v):
+        if v not in [0, 1]:
+            raise ValueError('Sessions de labo doit être 0 ou 1')
+        return v
+
+    @field_validator('Structured_Plan')
+    def validate_structured_plan(cls, v):
+        if not 0 <= v <= 2:
+            raise ValueError('Méthode d\'étude doit être entre 0 et 2')
+        return v
+
+    @field_validator('Living_Situation')
+    def validate_living_situation(cls, v):
+        if not 0 <= v <= 2:
+            raise ValueError('Situation de vie doit être entre 0 et 2')
+        return v
+
+    @field_validator('Sleep_Hours_Daily')
+    def validate_sleep_hours_daily(cls, v):
+        if not 0 <= v <= 24:
+            raise ValueError('Heures de sommeil doit être entre 0 et 24')
+        return v
+
+    @field_validator('Physical_Activity')
+    def validate_physical_activity(cls, v):
+        if not 0 <= v <= 2:
+            raise ValueError('Activité physique doit être entre 0 et 2')
+        return v
+
+    @field_validator('Study_Hours_Weekly')
+    def validate_study_hours_weekly(cls, v):
+        if not 0 <= v <= 168:
+            raise ValueError('Heures d\'étude par semaine doit être entre 0 et 168')
+        return v
+
+    @field_validator('Class_Regularity')
+    def validate_class_regularity(cls, v):
+        if not 0 <= v <= 6:
+            raise ValueError('Régularité en classe doit être entre 0 et 6')
+        return v
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-np.clip(z, -250, 250)))
@@ -73,17 +128,13 @@ def predict(data: StudentData):
             data.Sleep_Hours_Daily, data.Physical_Activity, data.Success_Factors_Len,
             data.Improvement_Suggestions_Len, data.Study_Hours_Weekly, data.Class_Regularity
         ]])
-
         # Normalisation
         scaled = (features - MIN_VALS) / (MAX_VALS - MIN_VALS + 1e-8)
         X_b = np.c_[np.ones(scaled.shape[0]), scaled]
-
         # Prédiction
         prob = sigmoid(np.dot(X_b, THETA))[0]
         prediction = int(prob >= 0.5)
-
         logger.info(f"Prédiction effectuée : {prediction} avec probabilité {prob}")
-
         # Recommandations personnalisées (priorisées et limitées à 5)
         recommendations = []
         if data.GPA < 12:
@@ -102,10 +153,8 @@ def predict(data: StudentData):
             recommendations.append("Pensez à plus d'améliorations : identifiez des axes comme le sommeil ou l'organisation.")
         if not recommendations:
             recommendations.append("Profil excellent ! Maintenez vos habitudes pour assurer une réussite continue.")
-
         # Limiter à 5 max et prioriser (ex. : trier par criticité si besoin)
         recommendations = recommendations[:5]
-
         return {
             "prediction": prediction,
             "probability": round(float(prob), 4),
@@ -117,3 +166,7 @@ def predict(data: StudentData):
     except Exception as e:
         logger.error(f"Erreur interne : {str(e)}")
         raise HTTPException(status_code=500, detail="Erreur lors de la prédiction")
+
+# Servir les fichiers statiques (pour le frontend HTML si intégré)
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
+```
