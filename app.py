@@ -1,4 +1,3 @@
-```python
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -169,4 +168,3 @@ def predict(data: StudentData):
 
 # Servir les fichiers statiques (pour le frontend HTML si intégré)
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
-```
